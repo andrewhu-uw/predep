@@ -15,3 +15,4 @@ install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/InterpConfig.h
           DESTINATION include/interp)
 
 add_executable(interp interp.cpp)
+install (TARGETS interp DESTINATION bin)
