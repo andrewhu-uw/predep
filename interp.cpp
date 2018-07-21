@@ -6,15 +6,16 @@
 #include<iostream>
 
 #include"interp.h"
+#include"ExprAST.h"
 
 using dep::Token;
 using std::shared_ptr;
 using std::string;
 
-static Token gettok(string* IdentifierStr, double* NumVal, long* IntVal);
+static Token gettok(string* IdentifierStr, double* FloatVal, long* IntVal);
 
 int main() {
-	string buf;
+    string buf;
 	double dval;
 	long ival;
 	
@@ -35,7 +36,7 @@ int main() {
 	WARNING: return value may not be a valid token if the input could not be
 	recognized
 	pre: args are not null */
-static Token gettok(string* IdentifierStr, double* NumVal, long* IntVal) {
+static Token gettok(string* IdentifierStr, double* FloatVal, long* IntVal) {
 	// not sure why this is static, but too scared to remove
 	static int LastChar = ' ';
 	bool hasDecimal = false;
@@ -66,7 +67,7 @@ static Token gettok(string* IdentifierStr, double* NumVal, long* IntVal) {
 		} while (isdigit(LastChar) || LastChar == '.');
 		char* useless;
 		if (hasDecimal) {
-			*NumVal = strtod(NumStr.c_str(), nullptr);
+			*FloatVal = strtod(NumStr.c_str(), nullptr);
 			return Token::tok_double;
 		}
 		else {
@@ -82,7 +83,7 @@ static Token gettok(string* IdentifierStr, double* NumVal, long* IntVal) {
 		while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
 
 		if (LastChar != EOF)
-			return gettok(IdentifierStr, NumVal, IntVal);
+			return gettok(IdentifierStr, FloatVal, IntVal);
 	}
 
 	// Check for end of file.  Don't eat the EOF.
