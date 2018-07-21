@@ -30,11 +30,11 @@ int main() {
 	std::cin.get();
 }
 
-/// gettok - Return the type of next token from standard input.
-/// output parameter corresponding to the return value is set
-/// WARNING: return value may not be a valid token if the input could not be
-/// recognized
-/// pre: args are not null
+/*	Return the type of next token from standard input.
+	output parameter corresponding to the return value is set
+	WARNING: return value may not be a valid token if the input could not be
+	recognized
+	pre: args are not null */
 static Token gettok(string* IdentifierStr, double* NumVal, long* IntVal) {
 	// not sure why this is static, but too scared to remove
 	static int LastChar = ' ';
