@@ -16,7 +16,7 @@ using std::shared_ptr;
 using std::string;
 using dep::Lexer;
 
-void* LogError(const char* Str);
+
 
 int main() {
     string buf;
@@ -36,11 +36,4 @@ int main() {
     dep::Parser p;
     //p.ParseParenExpr();
 	std::cin.get();
-}
-
-
-
-static void* LogError(const char* Str) {
-    fprintf(stderr, Str);
-    return nullptr;
 }

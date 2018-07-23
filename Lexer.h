@@ -2,6 +2,7 @@
 #define LEXER_H
 
 #include<string>
+#include<map>
 
 #include"interp.h"
 
@@ -13,12 +14,24 @@ namespace dep {
         double floatVal_;
         string identifierStr_;
         Token currTok_;
+        std::map<char, int> binopPrecedence_;
     public:
-        Lexer() : intVal_(0), floatVal_(0.0), identifierStr_("") {}
-        long intVal() { return intVal_; }
-        double floatVal() { return floatVal_; }
-        string identifierStr() { return identifierStr_; }
-        Token currTok() { return currTok_; }
+        Lexer() : intVal_(0), floatVal_(0.0), identifierStr_("") {
+            binopPrecedence_['<'] = 10;
+            binopPrecedence_['+'] = 20;
+            binopPrecedence_['-'] = 20;
+            binopPrecedence_['*'] = 40;
+        }
+        inline long intVal() { return intVal_; }
+        inline double floatVal() { return floatVal_; }
+        inline string identifierStr() { return identifierStr_; }
+        inline Token currTok() { return currTok_; }
+
+        inline int getPrecedence(int token) {
+            if (!isascii(token) || binopPrecedence_.find(token) == binopPrecedence_.end())
+                return -1;
+            return binopPrecedence_[token];
+        }
 
         /*!	Return the type of next token from standard input.
         output parameter corresponding to the return value is set
