@@ -1,4 +1,5 @@
-
+#ifndef INTERP_H
+#define INTERP_H
 
 namespace dep {
 	// The lexer returns tokens [0-255] if it is an unknown character, otherwise one
@@ -16,3 +17,5 @@ namespace dep {
 		tok_long = -6,
 	};
 }
+
+#endif
