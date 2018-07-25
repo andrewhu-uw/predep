@@ -1,8 +1,6 @@
-#include "Parse.h"
-#include "Parse.h"
 /// Copyright 2018 Andrew Hu
-#include<memory>
 #include<cassert>
+#include<memory>
 
 #include"Parse.h"
 #include"ExprAST.h"
