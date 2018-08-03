@@ -14,25 +14,25 @@ namespace dep {
     class Lexer {
         long intVal_;
         double floatVal_;
-        std::string identifierStr_;
-        std::string unknownToken_;
-        Token currTok_;
+        std::string identifierStr;
+        std::string unknownToken;
+        Token currTok;
         std::map<Token, int> binopPrecedence_;
         std::map<std::string, Token> keywords;
 
         //! Throw away currTok, load a new Token from the stream
-        bool advanceToken() { currTok_ = getToken(); return true; }
+        bool advanceToken() { currTok = getToken(); return true; }
     public:
         Lexer();
-        long intVal() { return intVal_; }
-        double floatVal() { return floatVal_; }
-        std::string identifierStr() { return identifierStr_; }
-        std::string unknownToken() { return unknownToken_; }
+        long IntVal() { return intVal_; }
+        double FloatVal() { return floatVal_; }
+        std::string IdentifierStr() { return identifierStr; }
+        std::string UnknownToken() { return unknownToken; }
 
         int getPrecedence() {
-            if (!isascii(currTok_) || binopPrecedence_.find(currTok_) == binopPrecedence_.end())
+            if (!isascii(currTok) || binopPrecedence_.find(currTok) == binopPrecedence_.end())
                 return -1;
-            return binopPrecedence_[currTok_];
+            return binopPrecedence_[currTok];
         }
 
         std::unique_ptr<ExprAST> LogError(const char* Str) {
@@ -55,29 +55,29 @@ namespace dep {
             if (t == tok_unknown) 
                 return t >= 0; 
             else 
-                return t == currTok_; 
+                return t == currTok; 
         }
         //! If currTok == t, advance, else do nothing
         bool checkAdvance(Token t) { return peekCheck(t) ? advanceToken() : false; }
         //! If checkAdvance fails, write the error and return false
-        bool expect(Token t) { if (checkAdvance(t)) return true; else LogErrorExpected(t, currTok_); return false; }
+        bool expect(Token t) { if (checkAdvance(t)) return true; else LogErrorExpected(t, currTok); return false; }
         //! Is currTok and operator?
-        bool checkOp() { return currTok_ > tok_op_begin && currTok_ < tok_op_end; }
+        bool checkOp() { return currTok > tok_op_begin && currTok < tok_op_end; }
         //! expect an operator, output value of operator through parameter iff return true
         bool expectOp(Token* op_ptr) { 
             if (checkOp()) {
-                *op_ptr = currTok_;
+                *op_ptr = currTok;
                 advanceToken();
                 return true;
             } else {
-                LogErrorExpected(tok_op_begin, currTok_);
+                LogErrorExpected(tok_op_begin, currTok);
                 return false;
             }
         }
 
         bool expectIdent(std::string* identifierPtr) { 
-            if (checkAdvance(tok_identifier)) { *identifierPtr = identifierStr_; return true; } 
-            else { LogErrorExpected(tok_identifier, currTok_); return false; }
+            if (checkAdvance(tok_identifier)) { *identifierPtr = identifierStr; return true; } 
+            else { LogErrorExpected(tok_identifier, currTok); return false; }
         }
 
         bool clearUntil(Token t) {

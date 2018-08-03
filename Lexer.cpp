@@ -4,7 +4,7 @@
 using dep::Token;
 using dep::Lexer;
 
-Lexer::Lexer() : intVal_(0), floatVal_(0.0), identifierStr_(""), unknownToken_(""), currTok_(tok_default) {
+Lexer::Lexer() : intVal_(0), floatVal_(0.0), identifierStr(""), unknownToken(""), currTok(tok_default) {
     binopPrecedence_[tok_plus] = 20;
     binopPrecedence_[tok_minus] = 20;
     binopPrecedence_[tok_times] = 40;
@@ -30,14 +30,15 @@ Token Lexer::getToken() {
         LastChar = getchar();
 
     if (isalpha(LastChar)) { // identifier: [a-zA-Z][a-zA-Z0-9]*
-        identifierStr_ = LastChar;
+        identifierStr = LastChar;
         while (isalnum((LastChar = getchar())))
-            identifierStr_ += LastChar;
+            identifierStr += LastChar;
 
-        if (identifierStr_ == "fn")
+        if (identifierStr == "fn")
             return Token::tok_fn;
-        if (identifierStr_ == "extern")
+        if (identifierStr == "extern")
             return Token::tok_extern;
+        if (identifierStr == "if")    ;
         return Token::tok_identifier;
     }
 

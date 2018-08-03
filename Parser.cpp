@@ -22,7 +22,7 @@ static unique_ptr<ExprAST> LogError(const char* Str);
 unique_ptr<IntExprAST> Parser::ParseIntExpr() {
     assert(lex.peekCheck(tok_long) && "Parser was asked to parse integer"
             ", but the current token is not an int");
-    auto node = make_unique<IntExprAST>(lex.intVal());
+    auto node = make_unique<IntExprAST>(lex.IntVal());
     lex.expect(tok_long);
     return move(node);
 }
@@ -30,7 +30,7 @@ unique_ptr<IntExprAST> Parser::ParseIntExpr() {
 unique_ptr<FloatExprAST> Parser::ParseFloatExpr() {
     assert(lex.peekCheck(tok_double) && "Parser was asked to parse float"
         ", but the current token is not a float");
-    auto node = make_unique<FloatExprAST>(lex.intVal());
+    auto node = make_unique<FloatExprAST>(lex.FloatVal());
     lex.expect(tok_double);
     return move(node);
 }
@@ -54,7 +54,7 @@ unique_ptr<ExprAST> Parser::ParseParenExpr() {
 unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
     assert(lex.peekCheck(tok_identifier) && "Parser asked to parse identifier"
         ", but current token is not an identifier");
-    string identifierCopy = lex.identifierStr();
+    string identifierCopy = lex.IdentifierStr();
     // Now that we know what the identifier, let's "peek" at the next token, is it
     // an opening parenthesis? Although this consumes the next token, it's still
     // stored in the lexer, so we can just call the appropriate method later

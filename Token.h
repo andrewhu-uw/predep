@@ -18,9 +18,14 @@ namespace dep {
         tok_double,
         tok_long,
 
+        tok_if,
+        tok_else,
+
         // syntactical
         tok_open_paren,
         tok_close_paren,
+        tok_open_curly,
+        tok_close_curly,
         tok_comma,
         tok_semicolon,
 
