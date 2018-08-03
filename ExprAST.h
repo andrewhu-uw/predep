@@ -83,11 +83,11 @@ namespace dep
         of arguments the function takes).*/
     class PrototypeAST {
         std::string Name;
-        std::vector<dep::Type> Types;
+        std::vector<std::string> Types;
         std::vector<std::string> Args;
 
     public:
-        PrototypeAST(const std::string &name, std::vector<dep::Type> Types, std::vector<std::string> Args)
+        PrototypeAST(const std::string &name, std::vector<std::string> Types, std::vector<std::string> Args)
             : Name(name), Types(std::move(Types)), Args(std::move(Args)) {}
 
         const std::string &getName() const { return Name; }

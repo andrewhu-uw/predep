@@ -84,7 +84,7 @@ unique_ptr<PrototypeAST> Parser::ParsePrototype() {
         return nullptr;
 
     lex.expect(tok_open_paren);
-    std::vector<dep::Type> types;
+    std::vector<string> types;
     std::vector<string> params;
     while (!lex.checkAdvance(tok_close_paren)) {
         string type;
