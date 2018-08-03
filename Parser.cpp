@@ -150,7 +150,14 @@ unique_ptr<FunctionAST> Parser::ParseTopLevelExpr() {
 }
 
 unique_ptr<dep::TupleExprAST> Parser::ParseTuple() {
-    return nullptr;
+    lex.expect(tok_open_paren);
+    std::vector<unique_ptr<ExprAST>> items;
+    items.push_back(move(ParseExpression()));
+    while (!lex.checkAdvance(tok_close_paren)) {
+        lex.expect(tok_comma);
+        items.push_back(move(ParseExpression()));
+    }
+    return make_unique<dep::TupleExprAST>(move(items));
 }
 
 static unique_ptr<ExprAST> LogError(const char* Str) {
