@@ -52,6 +52,8 @@ namespace dep {
         //!            ^ Call when curr token is in one of these
         std::unique_ptr<dep::ExprAST> ParseIdentifierExpr();
 
+        std::unique_ptr<dep::TupleExprAST> ParseTuple();
+
         /*! Parse an entire rvalue
             int i = <<<5+3>>;
             int i = <<<fib(5) + 10>>>;
@@ -82,6 +84,10 @@ namespace dep {
         std::unique_ptr<dep::PrototypeAST> ParseExtern();
 
         std::unique_ptr<dep::FunctionAST> ParseTopLevelExpr();
+
+        std::unique_ptr<dep::StatementAST> ParseStatement();
+
+        std::unique_ptr<dep::BlockAST> ParseBlock();
     };
 }
 #endif

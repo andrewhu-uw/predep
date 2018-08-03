@@ -17,14 +17,6 @@ using std::string;
 using dep::Lexer;
 using dep::Parser;
 
-class Dummy {
-    int i;
-    int j;
-    int k;
-public:
-    void doNothing() { std::cout << this; }
-};
-
 void MainLoop() {
     std::cerr << "dep>";
     // Hang to wait for initial input
@@ -36,7 +28,8 @@ void MainLoop() {
         } else if (p.onToken(Token::tok_extern)) {
             if (p.ParseExtern()) std::cerr << "Parsed an extern prototype" << std::endl;
         } else {
-            if (p.ParseTopLevelExpr()) std::cerr << "Parsed a top-level expression" << std::endl;;
+            //if (p.ParseTopLevelExpr()) std::cerr << "Parsed a top-level expression" << std::endl;
+            if (p.ParseStatement()) std::cerr << "Parsed a statement" << std::endl;
         }
         std::cerr << "dep>";
         if (p.onToken(Token::tok_semicolon)) {

@@ -91,7 +91,7 @@ namespace dep {
         }
 
         bool expectIdent(std::string* identifierPtr) { 
-            if (checkAdvance(tok_identifier)) { *identifierPtr = identifierStr; return true; } 
+            if (peekCheck(tok_identifier)) { *identifierPtr = identifierStr; advanceToken(); return true; }
             else { LogErrorExpected(tok_identifier, currTok); return false; }
         }
 

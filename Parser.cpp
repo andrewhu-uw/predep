@@ -149,6 +149,10 @@ unique_ptr<FunctionAST> Parser::ParseTopLevelExpr() {
     return make_unique<FunctionAST>(move(proto), move(expr));
 }
 
+unique_ptr<dep::TupleExprAST> Parser::ParseTuple() {
+    return nullptr;
+}
+
 static unique_ptr<ExprAST> LogError(const char* Str) {
     std::cerr << Str << std::endl;
     return nullptr;

@@ -45,6 +45,12 @@ namespace dep {
         VariableExprAST(const std::string &Name) : Name(Name) {}
     };
 
+    class TupleExprAST : public ExprAST {
+        std::vector<std::unique_ptr<ExprAST>> args;
+    public:
+        TupleExprAST(std::vector<std::unique_ptr<ExprAST>> Args) : args(std::move(Args)) {}
+    };
+
     //! Expression class for a binary operator.
     class BinaryExprAST : public ExprAST {
         char Op;
@@ -58,10 +64,10 @@ namespace dep {
     //! Expression class for function calls.
     class CallExprAST : public ExprAST {
         std::string Callee;
-        std::vector<std::unique_ptr<ExprAST>> Args;
+        std::unique_ptr<TupleExprAST> Args;
     public:
         CallExprAST(const std::string &Callee,
-            std::vector<std::unique_ptr<ExprAST>> Args)
+            std::unique_ptr<TupleExprAST> Args)
             : Callee(Callee), Args(std::move(Args)) {}
     };
 

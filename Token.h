@@ -22,6 +22,10 @@ namespace dep {
 
         tok_if,
         tok_else,
+        tok_for,
+        tok_while,
+        tok_let, // Probably won't be used
+        tok_in,
 
         // syntactical
         tok_open_paren,
@@ -30,6 +34,8 @@ namespace dep {
         tok_close_curly,
         tok_comma,
         tok_semicolon,
+        tok_colon,
+        tok_equals,
 
         //operators
         tok_op_begin,

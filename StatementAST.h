@@ -19,7 +19,7 @@ namespace dep {
         BlockAST(std::vector<std::unique_ptr<StatementAST>> s) : statements(std::move(s)) {}
     };
 
-    class AssignAST {
+    class AssignAST : public StatementAST {
         std::unique_ptr<VariableExprAST> dest;
         std::unique_ptr<ExprAST> src;
     public:
@@ -27,13 +27,13 @@ namespace dep {
             std::unique_ptr<ExprAST> s) : dest(std::move(d)), src(std::move(s)) {}
     };
 
-    class DefineAST {
+    class DefineAST : public StatementAST {
         std::string type, name;
     public:
         DefineAST(std::string Type, std::string Name) : type(Type), name(Name) {}
     };
 
-    class InitAST {
+    class InitAST : public StatementAST {
         std::unique_ptr<DefineAST> def;
         std::unique_ptr<ExprAST> rval;
     public:
@@ -41,7 +41,13 @@ namespace dep {
             def(std::move(Def)), rval(std::move(Rval)) {}
     };
 
-    class SingleIfAST {
+    class CallStatementAST : public StatementAST {
+        std::unique_ptr<CallExprAST> call;
+    public:
+        CallStatementAST(std::unique_ptr<CallExprAST> Call) : call(std::move(Call)) {}
+    };
+
+    class SingleIfAST : public StatementAST {
         std::unique_ptr<ExprAST> cond;
         std::unique_ptr<BlockAST> thenBlock;
     public:
@@ -49,7 +55,7 @@ namespace dep {
             cond(std::move(Cond)), thenBlock(std::move(ThenBlock)) {}
     };
 
-    class IfAST {
+    class IfAST : public StatementAST {
         std::unique_ptr<ExprAST> cond;
         std::unique_ptr<BlockAST> thenBlock;
         std::vector<SingleIfAST> elseIfVec;
@@ -61,7 +67,7 @@ namespace dep {
                 elseIfVec(std::move(ElseIfVec)), elseBlock(std::move(ElseBlock)) {}
     };
 
-    class WhileAST {
+    class WhileAST : public StatementAST {
         std::unique_ptr<ExprAST> cond;
         std::unique_ptr<BlockAST> body;
     public:

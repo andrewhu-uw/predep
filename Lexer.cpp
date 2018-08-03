@@ -18,6 +18,8 @@ Lexer::Lexer() : intVal_(0), floatVal_(0.0), identifierStr(""), unknownToken("")
     keywords["*"] = tok_times;
     keywords["/"] = tok_divide;
     keywords[";"] = tok_semicolon;
+    keywords["="] = tok_equals;
+    keywords[":"] = tok_colon;
 }
 
 Token Lexer::getToken() {

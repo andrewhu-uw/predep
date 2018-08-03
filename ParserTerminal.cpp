@@ -62,6 +62,7 @@ unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
     // function call, so parse the arguments
     // int i = fib( <<<a>>>, b );
     //                 ^ Parser is here right now
+    // FIXME Use a Tuple here to store the args, actually just implement the Tuple parser and use that 
     std::vector<unique_ptr<ExprAST>> args;
     while (!lex.checkAdvance(tok_close_paren)) {
         unique_ptr<ExprAST> currArg = ParseExpression();
@@ -75,7 +76,7 @@ unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
             lex.LogError("Did you forget a comma?\nExpected ',' or ')'\n");
         }
     }
-    return make_unique<CallExprAST>(identifierCopy, std::move(args));
+    return make_unique<CallExprAST>(identifierCopy, make_unique<TupleExprAST>(std::move(args)));
 }
 
 unique_ptr<PrototypeAST> Parser::ParsePrototype() {
