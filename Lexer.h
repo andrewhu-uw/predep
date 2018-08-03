@@ -7,8 +7,8 @@
 #include<map>
 #include<memory>
 
-#include"interp.h"
-#include"ExprAST.h"
+#include "ExprAST.h"
+#include "Token.h"
 
 namespace dep {
     class Lexer {
