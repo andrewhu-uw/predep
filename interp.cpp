@@ -1,4 +1,4 @@
-/// Copyright 2018 Andrew Hu
+// Copyright 2018 Andrew Hu
 #include<algorithm>
 #include<cstdlib>
 #include<cctype>
@@ -9,7 +9,7 @@
 #include"interp.h"
 #include"ExprAST.h"
 #include"Lexer.h"
-#include"Parse.h"
+#include"Parser.h"
 
 using dep::Token;
 using std::shared_ptr;

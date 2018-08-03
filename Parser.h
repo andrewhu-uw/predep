@@ -1,4 +1,4 @@
-/// Copyright 2018 Andrew Hu
+// Copyright 2018 Andrew Hu
 //! All parses both parse and consume tokens
 #ifndef PARSE_H
 #define PARSE_H

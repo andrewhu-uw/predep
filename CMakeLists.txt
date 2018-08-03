@@ -14,13 +14,13 @@ configure_file (InterpConfig.h.in   InterpConfig.h)
 install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/InterpConfig.h
           DESTINATION include/interp)
 
-# Set the current target to the interpreter so we can use more general linking
+# Create the Parse library
+add_library(Parser Parser.cpp Lexer.cpp)
+
 set (target interp)
 
 add_executable(${target} interp.cpp)
 
-add_library(Parse Parse.cpp)
-
-target_link_libraries (${target} Parse)
+target_link_libraries (${target} Parser)
 
 install (TARGETS ${target} DESTINATION bin)
