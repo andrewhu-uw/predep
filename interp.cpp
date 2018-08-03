@@ -15,25 +15,36 @@ using dep::Token;
 using std::shared_ptr;
 using std::string;
 using dep::Lexer;
+using dep::Parser;
 
+class Dummy {
+    int i;
+    int j;
+    int k;
+public:
+    void doNothing() { std::cout << this; }
+};
 
+void MainLoop() {
+    std::cerr << "dep>";
+    // Hang to wait for initial input
+
+    Parser p;
+    while (true) {
+        if (p.onToken(Token::tok_fn)) {
+            if (p.ParseDefinition()) std::cerr << "Parsed a definition" << std::endl;
+        } else if (p.onToken(Token::tok_extern)) {
+            if (p.ParseExtern()) std::cerr << "Parsed an extern prototype" << std::endl;
+        } else {
+            if (p.ParseTopLevelExpr()) std::cerr << "Parsed a top-level expression" << std::endl;;
+        }
+        std::cerr << "dep>";
+        if (p.onToken(Token::tok_semicolon)) {
+            p.clearSemicolon();
+        }
+    }
+}
 
 int main() {
-    string buf;
-	double dval;
-	long ival;
-	
-    Lexer lex;
-	Token input = lex.getToken();
-	if (input == Token::tok_identifier) {
-        std::cout << lex.identifierStr();
-	} else if (input == Token::tok_double) {
-        std::cout << lex.floatVal();
-	} else {
-		std::cout << lex.intVal();
-	}
-
-    dep::Parser p;
-    //p.ParseParenExpr();
-	std::cin.get();
+    MainLoop();
 }

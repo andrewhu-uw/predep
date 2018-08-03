@@ -27,7 +27,7 @@ namespace dep
         FloatExprAST(double Val) : FloatVal(Val) {}
     };
 
-    /// Expression class for floating point literals like "1.0".
+    //! Expression class for floating point literals like "1.0".
     class IntExprAST : public ImmediateAST {
         long IntVal;
 
@@ -35,7 +35,7 @@ namespace dep
         IntExprAST(long Val) : IntVal(Val) {}
     };
 
-    /// Expression class for referencing a variable, like "a".
+    //! Expression class for referencing a variable, like "a".
     class VariableExprAST : public ExprAST {
         std::string Name;
 
@@ -43,7 +43,7 @@ namespace dep
         VariableExprAST(const std::string &Name) : Name(Name) {}
     };
 
-    /// Expression class for a binary operator.
+    //! Expression class for a binary operator.
     class BinaryExprAST : public ExprAST {
         char Op;
         std::unique_ptr<ExprAST> LHS, RHS;
@@ -54,7 +54,7 @@ namespace dep
             : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
     };
 
-    /// Expression class for function calls.
+    //! Expression class for function calls.
     class CallExprAST : public ExprAST {
         std::string Callee;
         std::vector<std::unique_ptr<ExprAST>> Args;

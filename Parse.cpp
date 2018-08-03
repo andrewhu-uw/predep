@@ -9,99 +9,190 @@
 using std::unique_ptr;
 using std::make_unique;
 using std::move;
+using std::string;
 using dep::Parser;
 using dep::IntExprAST;
 using dep::FloatExprAST;
 using dep::ExprAST;
+using dep::PrototypeAST;
+using dep::FunctionAST;
 
 static unique_ptr<ExprAST> LogError(const char* Str);
 
 unique_ptr<IntExprAST> Parser::ParseIntExpr() {
-    assert(lex.currTok() == tok_long && "Parser was asked to parse integer"
+    assert(lex.peekCheck(tok_long) && "Parser was asked to parse integer"
             ", but the current token is not an int");
-    dep::Token result = lex.getToken();
-    return make_unique<IntExprAST>(lex.intVal());
+    auto node = make_unique<IntExprAST>(lex.intVal());
+    lex.expect(tok_long);
+    return move(node);
 }
 
 unique_ptr<FloatExprAST> Parser::ParseFloatExpr() {
-    assert(lex.currTok() == tok_double && "Parser was asked to parse float"
+    assert(lex.peekCheck(tok_double) && "Parser was asked to parse float"
         ", but the current token is not a float");
-    dep::Token result = lex.getToken();
-    return make_unique<FloatExprAST>(lex.floatVal());
+    auto node = make_unique<FloatExprAST>(lex.intVal());
+    lex.expect(tok_double);
+    return move(node);
 }
 
 unique_ptr<ExprAST> Parser::ParseParenExpr() {
     // int i = ( 5 + 9 ) * 7
     //         ^ currTok is here
     // move from '(' to the inside
-    assert(lex.currTok() == '(' && "Parser was asked to parse parentheses"
+    assert(lex.peekCheck(tok_open_paren) && "Parser was asked to parse parentheses"
         ", but current token is not opening parentheses");
-    lex.getToken();
+    lex.expect(tok_open_paren);
     auto insideExpr = ParseExpression();
     if (insideExpr == nullptr)
         return nullptr;
 
-    if (lex.currTok() != ')')
-        return LogError("Expected end of parentheses, didn't find it");
-    // move from ')' to the next token
-    lex.getToken();
+    // verify that ')' was there, and move past it.
+    lex.expect(tok_close_paren);
     return insideExpr;
 }
 
-std::unique_ptr<dep::ExprAST> dep::Parser::ParseIdentifierExpr() {
-    assert(lex.currTok() == tok_identifier && "Parser asked to parse identifier"
+unique_ptr<ExprAST> Parser::ParseIdentifierExpr() {
+    assert(lex.peekCheck(tok_identifier) && "Parser asked to parse identifier"
         ", but current token is not an identifier");
     string identifierCopy = lex.identifierStr();
     // Now that we know what the identifier, let's "peek" at the next token, is it
     // an opening parenthesis? Although this consumes the next token, it's still
     // stored in the lexer, so we can just call the appropriate method later
-    lex.getToken();
+    lex.expect(tok_identifier);
     // Check if it's a variable
-    if (lex.currTok() != '(')
+    if (!lex.checkAdvance(tok_open_paren))
         return make_unique<VariableExprAST>(identifierCopy);
 
-    // Looks like it's a function call, so parse the arguments
-    // int i = fib<<<(>>> 0 );
-    //               ^ Parser is here right now
-    lex.getToken();
+    // function call, so parse the arguments
+    // int i = fib( <<<a>>>, b );
+    //                 ^ Parser is here right now
     std::vector<unique_ptr<ExprAST>> args;
-    while (lex.currTok() != ')') {
+    while (!lex.checkAdvance(tok_close_paren)) {
         unique_ptr<ExprAST> currArg = ParseExpression();
         if (currArg == nullptr)
             return nullptr;
         args.push_back(move(currArg));
 
-        if (lex.currTok() == ',') {
-            lex.getToken();
-        } else if (lex.currTok() != ')') {
-            LogError("Expected closing parenthesis on function call");
+        // Logical short circuit will exit early on a correctly placed comma or
+        // the closing paren, but will error if a comma was forgotten
+        if (!lex.checkAdvance(tok_comma) && !lex.peekCheck(tok_close_paren)) {
+            lex.LogError("Did you forget a comma?\nExpected ',' or ')'\n");
         }
     }
-    // Move past the closing parenthesis
-    lex.getToken();
     return make_unique<CallExprAST>(identifierCopy, std::move(args));
 }
 
-std::unique_ptr<ExprAST> Parser::ParsePrimary() {
-    switch (lex.currTok()) {
-    default:
-        return LogError("unknown token when expecting an expression");
-    case tok_identifier:
+unique_ptr<ExprAST> Parser::ParsePrimary() {
+    if (lex.peekCheck(tok_identifier))
         return ParseIdentifierExpr();
-    case tok_double:
+    else if (lex.peekCheck(tok_double))
         return ParseFloatExpr();
-    case tok_long:
+    else if (lex.peekCheck(tok_long))
         return ParseIntExpr();
-    case '(':
+    else if (lex.peekCheck(tok_open_paren))
         return ParseParenExpr();
+    else
+        return LogError("unknown token when expecting an expression");
+}
+
+unique_ptr<ExprAST> Parser::ParseExpression() {
+    unique_ptr<ExprAST> LHS = ParsePrimary();
+    if (LHS == nullptr)
+        return nullptr;
+    
+    // precedence zero means that any operator can be applied to the right
+    return ParseBinOpRHS(0, std::move(LHS));
+}
+
+unique_ptr<ExprAST> Parser::ParseBinOpRHS(int precedenceLHS, unique_ptr<ExprAST> LHS) {
+    // FIXME recursion with a loop, gross I know
+    while (true) {
+        // if this is not an operator, the expression is over
+        if (!lex.checkOp())
+            return LHS;
+        int curr_prec = lex.getPrecedence();
+
+        // if it's precedence is too low, quit early
+        // this should happen around here
+        // a + b * c <<<+>>> d
+        if (curr_prec < precedenceLHS)
+            return LHS;
+
+        // get the operator and move past it
+        Token op;
+        if (!lex.expectOp(&op)) {
+            LogError("Thought we found a valid operator, but it was not. This should never happen.\n");
+        }
+        
+        unique_ptr<ExprAST> RHS = ParsePrimary();
+        if (!RHS) return nullptr;
+
+        // This is the precedence of the operator just past RHS
+        // a + b <<<op>>> ???
+        int next_op_prec = lex.getPrecedence();
+
+        if (curr_prec < next_op_prec) {
+            // When our RH operator is more precedent, evaluate the RH first, but 
+            // make the minimum precedence to continue just higher than the current operator,
+            // that way we get (a)+(b*c)+(d) instead of (a)+(b*c+d)
+            RHS = ParseBinOpRHS(precedenceLHS + 1, move(RHS));
+            if (!RHS) return nullptr;
+        }
+
+        LHS = make_unique<BinaryExprAST>(op, move(LHS), move(RHS));
     }
 }
 
-std::unique_ptr<dep::ExprAST> dep::Parser::ParseExpression() {
-    return nullptr;
+unique_ptr<PrototypeAST> Parser::ParsePrototype() {
+    string name;
+    if (!lex.expectIdent(&name))
+        return nullptr;
+
+    lex.expect(tok_open_paren);
+    std::vector<dep::Type> types;
+    std::vector<string> params;
+    while (!lex.checkAdvance(tok_close_paren)) {
+        string type;
+        lex.expectIdent(&type);
+        //TODO: conver string type to an actual type
+
+        string name;
+        lex.expectIdent(&name);
+        params.push_back(name);
+
+        // Logical short circuit will exit early on a correctly placed comma or
+        // the closing paren, but will error if a comma was forgotten
+        if (!lex.checkAdvance(tok_comma) && !lex.peekCheck(tok_close_paren)) {
+            lex.LogError("Did you forget a comma?\nExpected ',' or ')'\n");
+        }
+    }
+    return make_unique<PrototypeAST>(name, types, params);
+}
+
+unique_ptr<FunctionAST> Parser::ParseDefinition() {
+    lex.expect(tok_fn);
+
+    auto proto = ParsePrototype();
+    if (!proto) return nullptr;
+
+    auto body = ParseExpression();
+    return body ? make_unique<FunctionAST>(move(proto), move(body)) : nullptr;
+}
+
+unique_ptr<PrototypeAST> Parser::ParseExtern() {
+    lex.expect(tok_extern);
+    return ParsePrototype();
+}
+
+unique_ptr<FunctionAST> Parser::ParseTopLevelExpr() {
+    auto expr = ParseExpression();
+    if (!expr) return nullptr;
+    
+    auto proto = make_unique<PrototypeAST>("__anon_expr", std::vector<dep::Type>(), std::vector<string>());
+    return make_unique<FunctionAST>(move(proto), move(expr));
 }
 
 static unique_ptr<ExprAST> LogError(const char* Str) {
-    fprintf(stderr, Str);
+    std::cerr << Str << std::endl;
     return nullptr;
 }
