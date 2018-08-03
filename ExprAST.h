@@ -65,6 +65,14 @@ namespace dep
             : Callee(Callee), Args(std::move(Args)) {}
     };
 
+    class IfExprAST : public ExprAST {
+        std::unique_ptr<ExprAST> Cond, Then, Else;
+    public:
+        IfExprAST(std::unique_ptr<ExprAST> Cond, std::unique_ptr<ExprAST> Then,
+            std::unique_ptr<ExprAST> Else)
+            : Cond(std::move(Cond)), Then(std::move(Then)), Else(std::move(Else)) {}
+    };
+
     /*!  This class represents the "prototype" for a function,
         which captures its name, and its argument names (thus implicitly the number
         of arguments the function takes).*/

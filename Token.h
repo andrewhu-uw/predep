@@ -17,6 +17,8 @@ namespace dep {
         tok_identifier,
         tok_double,
         tok_long,
+        tok_true,
+        tok_false,
 
         tok_if,
         tok_else,

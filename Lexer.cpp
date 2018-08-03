@@ -38,7 +38,14 @@ Token Lexer::getToken() {
             return Token::tok_fn;
         if (identifierStr == "extern")
             return Token::tok_extern;
-        if (identifierStr == "if")    ;
+        if (identifierStr == "if")
+            return Token::tok_if;
+        if (identifierStr == "else")
+            return Token::tok_else;
+        if (identifierStr == "true")
+            return Token::tok_true;
+        if (identifierStr == "false")
+            return Token::tok_false;
         return Token::tok_identifier;
     }
 

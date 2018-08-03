@@ -5,6 +5,7 @@
 #include"Parser.h"
 #include"ExprAST.h"
 #include"interp.h"
+#include"Type.h"
 
 using std::unique_ptr;
 using std::make_unique;
@@ -16,6 +17,7 @@ using dep::FloatExprAST;
 using dep::ExprAST;
 using dep::PrototypeAST;
 using dep::FunctionAST;
+using dep::IfExprAST;
 
 static unique_ptr<ExprAST> LogError(const char* Str);
 
@@ -91,14 +93,15 @@ unique_ptr<ExprAST> Parser::ParsePrimary() {
         return ParseIntExpr();
     else if (lex.peekCheck(tok_open_paren))
         return ParseParenExpr();
+    else if (lex.peekCheck(tok_if))
+        return ParseIfExpr();
     else
         return LogError("unknown token when expecting an expression");
 }
 
 unique_ptr<ExprAST> Parser::ParseExpression() {
     unique_ptr<ExprAST> LHS = ParsePrimary();
-    if (LHS == nullptr)
-        return nullptr;
+    if (!LHS) return nullptr;
     
     // precedence zero means that any operator can be applied to the right
     return ParseBinOpRHS(0, std::move(LHS));
@@ -167,6 +170,35 @@ unique_ptr<PrototypeAST> Parser::ParsePrototype() {
         }
     }
     return make_unique<PrototypeAST>(name, types, params);
+}
+
+unique_ptr<ExprAST> Parser::ParseIfExpr() {
+    lex.expect(tok_if);
+    lex.expect(tok_open_paren);
+
+    unique_ptr<ExprAST> cond = ParseExpression();
+    if (!cond) return nullptr;
+
+    lex.expect(tok_close_paren);
+
+    // Accept with curlies or not
+    bool has_curlies = lex.checkAdvance(tok_open_curly);
+
+    auto then_block = ParseExpression();
+    if (!then_block) return nullptr;
+
+    if (has_curlies) lex.expect(tok_close_curly);
+
+    //TODO right now we only accept if else statements since functions are only one expression
+    lex.expect(tok_else);
+    if (has_curlies) lex.expect(tok_open_curly);
+
+    auto else_block = ParseExpression();
+    if (!else_block) return nullptr;
+
+    if (has_curlies) lex.expect(tok_close_curly);
+
+    return make_unique<IfExprAST>(move(cond), move(then_block), move(else_block));
 }
 
 unique_ptr<FunctionAST> Parser::ParseDefinition() {

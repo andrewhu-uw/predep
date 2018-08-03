@@ -67,6 +67,8 @@ namespace dep {
         */
         std::unique_ptr<dep::ExprAST> ParseBinOpRHS(int precedenceLHS, std::unique_ptr<dep::ExprAST> LHS);
 
+        std::unique_ptr<dep::ExprAST> ParseIfExpr();
+
         std::unique_ptr<dep::PrototypeAST> ParsePrototype();
 
         std::unique_ptr<dep::FunctionAST> ParseDefinition();
