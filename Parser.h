@@ -6,8 +6,9 @@
 #include<memory>
 #include<iostream>
 
-#include"ExprAST.h"
-#include"Lexer.h"
+#include "ExprAST.h"
+#include "Lexer.h"
+#include "FunctionAST.h"
 
 using dep::Lexer;
 
