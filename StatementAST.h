@@ -3,6 +3,7 @@
 
 #include<memory>
 #include<map>
+#include<string>
 
 #include"ExprAST.h"
 
@@ -24,6 +25,20 @@ namespace dep {
     public:
         AssignAST(std::unique_ptr<VariableExprAST> d,
             std::unique_ptr<ExprAST> s) : dest(std::move(d)), src(std::move(s)) {}
+    };
+
+    class DefineAST {
+        std::string type, name;
+    public:
+        DefineAST(std::string Type, std::string Name) : type(Type), name(Name) {}
+    };
+
+    class InitAST {
+        std::unique_ptr<DefineAST> def;
+        std::unique_ptr<ExprAST> rval;
+    public:
+        InitAST(std::unique_ptr<DefineAST> Def, std::unique_ptr<ExprAST> Rval) :
+            def(std::move(Def)), rval(std::move(Rval)) {}
     };
 
     class SingleIfAST {
