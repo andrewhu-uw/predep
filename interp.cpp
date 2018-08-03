@@ -40,7 +40,7 @@ void MainLoop() {
         }
         std::cerr << "dep>";
         if (p.onToken(Token::tok_semicolon)) {
-            p.clearSemicolon();
+            p.clearLine();
         }
     }
 }

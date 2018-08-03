@@ -27,6 +27,7 @@ namespace dep {
             binopPrecedence_[tok_minus] = 20;
             binopPrecedence_[tok_times] = 40;
             binopPrecedence_[tok_divide] = 40;
+            binopPrecedence_[tok_less_than] = 10;
             keywords["("] = tok_open_paren;
             keywords[")"] = tok_close_paren;
             keywords[","] = tok_comma;
@@ -92,6 +93,12 @@ namespace dep {
             else { LogErrorExpected(tok_identifier, currTok_); return false; }
         }
 
+        bool clearUntil(Token t) {
+            while (!peekCheck(t))
+                advanceToken();
+            return true;
+        }
+
         /*!	Return the type of next token from standard input.
             output member corresponding to the return value is set
             WARNING: return value may not be a valid token if the input could not be
@@ -151,23 +158,12 @@ namespace dep {
             if (LastChar == EOF)
                 return Token::tok_eof;
 
+            // TODO: Fix this ugly mess that assumes keywords are one character
             Token syntax_tok = tok_default;
-            if (LastChar == '(')
-                syntax_tok = Token::tok_open_paren;
-            if (LastChar == ')')
-                syntax_tok = Token::tok_close_paren;
-            if (LastChar == ',')
-                syntax_tok = Token::tok_comma;
-            if (LastChar == '+')
-                syntax_tok = Token::tok_plus;
-            if (LastChar == '-')
-                syntax_tok = Token::tok_minus;
-            if (LastChar == '*')
-                syntax_tok = Token::tok_times;
-            if (LastChar == '/')
-                syntax_tok = Token::tok_divide;
-            if (LastChar == ';')
-                syntax_tok = Token::tok_semicolon;
+            std::string keyword = std::string(1, static_cast<char>(LastChar));
+            auto result = keywords.find(keyword);
+            if (result != keywords.end())
+                syntax_tok = result->second;
 
             if (syntax_tok != tok_default) {
                 LastChar = getchar();

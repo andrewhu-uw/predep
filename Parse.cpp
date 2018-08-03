@@ -153,11 +153,11 @@ unique_ptr<PrototypeAST> Parser::ParsePrototype() {
     std::vector<string> params;
     while (!lex.checkAdvance(tok_close_paren)) {
         string type;
-        lex.expectIdent(&type);
+        if (!lex.expectIdent(&type)) return nullptr;
         //TODO: conver string type to an actual type
 
         string name;
-        lex.expectIdent(&name);
+        if (!lex.expectIdent(&name)) return nullptr;
         params.push_back(name);
 
         // Logical short circuit will exit early on a correctly placed comma or

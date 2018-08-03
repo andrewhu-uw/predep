@@ -31,6 +31,7 @@ namespace dep {
         tok_minus,
         tok_times,
         tok_divide,
+        tok_less_than,
 
         tok_op_end,
 	};

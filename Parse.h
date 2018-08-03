@@ -18,7 +18,7 @@ namespace dep {
     public:
         Parser() { lex.expect(tok_default); }
         bool onToken(Token t) { return lex.peekCheck(t); }
-        bool clearSemicolon() { return lex.checkAdvance(tok_semicolon); }
+        bool clearLine() { lex.clearUntil(tok_semicolon); return lex.checkAdvance(tok_semicolon); }
 
         //! Parses the current integer immediate
         //! @pre{ lex.currTok_ == tok_long }
