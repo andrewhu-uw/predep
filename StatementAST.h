@@ -12,6 +12,12 @@ namespace dep {
         virtual ~StatementAST() {}
     };
 
+    class BlockAST {
+        std::vector<std::unique_ptr<StatementAST>> statements;
+    public:
+        BlockAST(std::vector<std::unique_ptr<StatementAST>> s) : statements(std::move(s)) {}
+    };
+
     class AssignAST {
         std::unique_ptr<VariableExprAST> dest;
         std::unique_ptr<ExprAST> src;
@@ -47,11 +53,5 @@ namespace dep {
         WhileAST(std::unique_ptr<ExprAST> Cond, std::unique_ptr<BlockAST> Body) :
             cond(std::move(Cond)), body(std::move(Body)) {}
     };
-
-    class BlockAST {
-        std::vector<std::unique_ptr<StatementAST>> statements;
-    public:
-        BlockAST(std::vector<std::unique_ptr<StatementAST>> s) : statements(s) {}
-    };
-}
+}  // end namespace dep
 #endif // !STATEMENT_AST_H
