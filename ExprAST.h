@@ -5,6 +5,7 @@
 #include<iostream>
 #include<vector>
 #include<memory>
+#include<string>
 
 #include "Type.h"
 
@@ -22,7 +23,6 @@ namespace dep
     //! Expression class for floating point literals like "1.0".
     class FloatExprAST : public ImmediateAST {
         double FloatVal;
-
     public:
         FloatExprAST(double Val) : FloatVal(Val) {}
     };
@@ -30,9 +30,14 @@ namespace dep
     //! Expression class for floating point literals like "1.0".
     class IntExprAST : public ImmediateAST {
         long IntVal;
-
     public:
         IntExprAST(long Val) : IntVal(Val) {}
+    };
+
+    class BoolExprAST : public ImmediateAST {
+        bool _BoolVal;
+    public:
+        BoolExprAST(bool val) : _BoolVal(val) {}
     };
 
     //! Expression class for referencing a variable, like "a".

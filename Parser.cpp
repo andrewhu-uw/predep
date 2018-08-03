@@ -18,6 +18,7 @@ using dep::ExprAST;
 using dep::PrototypeAST;
 using dep::FunctionAST;
 using dep::IfExprAST;
+using dep::BoolExprAST;
 
 static unique_ptr<ExprAST> LogError(const char* Str);
 
@@ -35,6 +36,14 @@ unique_ptr<FloatExprAST> Parser::ParseFloatExpr() {
     auto node = make_unique<FloatExprAST>(lex.FloatVal());
     lex.expect(tok_double);
     return move(node);
+}
+
+unique_ptr<BoolExprAST> Parser::ParseBoolExpr() {
+    assert((lex.peekCheck(tok_true) || lex.peekCheck(tok_false)) && "Parser was asked parse "
+        "boolean constant, but the current token is not a boolean");
+    auto leaf = make_unique<BoolExprAST>(lex.IntVal());
+    lex.expectBool(nullptr);
+    return move(leaf);
 }
 
 unique_ptr<ExprAST> Parser::ParseParenExpr() {
@@ -91,6 +100,8 @@ unique_ptr<ExprAST> Parser::ParsePrimary() {
         return ParseFloatExpr();
     else if (lex.peekCheck(tok_long))
         return ParseIntExpr();
+    else if (lex.checkBool())
+        return ParseBoolExpr();
     else if (lex.peekCheck(tok_open_paren))
         return ParseParenExpr();
     else if (lex.peekCheck(tok_if))
@@ -189,7 +200,7 @@ unique_ptr<ExprAST> Parser::ParseIfExpr() {
 
     if (has_curlies) lex.expect(tok_close_curly);
 
-    //TODO right now we only accept if else statements since functions are only one expression
+    //TODO right now we only accept if else expressions since functions are only one expression
     lex.expect(tok_else);
     if (has_curlies) lex.expect(tok_open_curly);
 

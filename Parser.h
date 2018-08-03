@@ -32,6 +32,11 @@ namespace dep {
         //!            ^ Call when curr token is in the "wakas"
         std::unique_ptr<dep::FloatExprAST> ParseFloatExpr();
 
+        //! Parses the current boolean constant
+        //! @pre { lex.checkBool in { tok_true, tok_false } }
+        //! bool b = <<<false>>>;
+        std::unique_ptr<dep::BoolExprAST> ParseBoolExpr();
+
         //! Parses parentheses that have <i>not</i> been consumed
         //! yet
         //! @pre { lex.currTok_ == '(' }

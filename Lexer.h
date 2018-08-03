@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include<string>
+#include<sstream>
 #include<map>
 #include<memory>
 
@@ -66,12 +67,26 @@ namespace dep {
         //! expect an operator, output value of operator through parameter iff return true
         bool expectOp(Token* op_ptr) { 
             if (checkOp()) {
-                *op_ptr = currTok;
+                if (op_ptr) *op_ptr = currTok;
                 advanceToken();
                 return true;
             } else {
                 LogErrorExpected(tok_op_begin, currTok);
                 return false;
+            }
+        }
+
+        bool checkBool() { return currTok == tok_false || currTok == tok_true; }
+        bool expectBool(Token* tok_ptr) {
+            if (checkBool()) {
+                if (tok_ptr) *tok_ptr = currTok;
+                advanceToken();
+                return true;
+            } else {
+                std::stringstream err;
+                err << "Expected a boolean value instead found token ";
+                err << currTok;
+                LogError(err.str().c_str());
             }
         }
 
