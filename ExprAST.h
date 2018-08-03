@@ -9,16 +9,14 @@
 
 #include "Type.h"
 
-namespace dep
-{
+namespace dep {
     /// Base class for all expression nodes.
     class ExprAST {
     public:
         virtual ~ExprAST() {}
     };
 
-    class ImmediateAST : public ExprAST {
-    };
+    class ImmediateAST : public ExprAST {};
 
     //! Expression class for floating point literals like "1.0".
     class FloatExprAST : public ImmediateAST {
@@ -43,7 +41,6 @@ namespace dep
     //! Expression class for referencing a variable, like "a".
     class VariableExprAST : public ExprAST {
         std::string Name;
-
     public:
         VariableExprAST(const std::string &Name) : Name(Name) {}
     };
@@ -52,7 +49,6 @@ namespace dep
     class BinaryExprAST : public ExprAST {
         char Op;
         std::unique_ptr<ExprAST> LHS, RHS;
-
     public:
         BinaryExprAST(char op, std::unique_ptr<ExprAST> LHS,
             std::unique_ptr<ExprAST> RHS)
@@ -63,7 +59,6 @@ namespace dep
     class CallExprAST : public ExprAST {
         std::string Callee;
         std::vector<std::unique_ptr<ExprAST>> Args;
-
     public:
         CallExprAST(const std::string &Callee,
             std::vector<std::unique_ptr<ExprAST>> Args)
