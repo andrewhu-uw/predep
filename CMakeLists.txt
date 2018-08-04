@@ -26,3 +26,19 @@ add_executable(${target} interp.cpp)
 target_link_libraries (${target} Parser)
 
 install (TARGETS ${target} DESTINATION bin)
+
+#Finding LLVM
+
+# Allow the user to enter their LLVM install path
+set(LLVM_INSTALL_PREFIX CACHE PATH "If LLVM was built using CMake, this is the location where it was installed")
+
+# Update LLVM_DIR for find_package. FORCE makes the GUI update
+set(LLVM_DIR "${LLVM_INSTALL_PREFIX}/lib/cmake/llvm" CACHE PATH "LLVM CMake files" FORCE)
+
+find_package(LLVM REQUIRED CONFIG)
+
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+include_directories(${LLVM_INCLUDE_DIRS})
+add_definitions(${LLVM_DEFINITIONS})

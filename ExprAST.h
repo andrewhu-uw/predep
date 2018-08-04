@@ -7,6 +7,8 @@
 #include<memory>
 #include<string>
 
+#include "llvm/IR/Value.h"
+
 #include "Type.h"
 
 namespace dep {

@@ -33,6 +33,7 @@ namespace dep {
                 // Function call
                 unique_ptr<TupleExprAST> argument_list = ParseTuple();
                 unique_ptr<CallExprAST> call_expr = make_unique<CallExprAST>(first_ident, move(argument_list));
+                assert(lex.peekCheck(tok_semicolon) && "This should be the end of the statement");
                 return make_unique<CallStatementAST>(std::move(call_expr));
             }
 
