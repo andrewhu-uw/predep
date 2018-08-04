@@ -28,6 +28,7 @@ target_link_libraries (${target} Parser)
 install (TARGETS ${target} DESTINATION bin)
 
 #Finding LLVM
+# http://llvm.org/docs/CMake.html#embedding-llvm-in-your-project
 
 # Allow the user to enter their LLVM install path
 set(LLVM_INSTALL_PREFIX CACHE PATH "If LLVM was built using CMake, this is the location where it was installed")

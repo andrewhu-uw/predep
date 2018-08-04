@@ -16,6 +16,7 @@ namespace dep {
     class ExprAST {
     public:
         virtual ~ExprAST() {}
+        virtual llvm::Value* codegen() = 0;
     };
 
     class ImmediateAST : public ExprAST {};
@@ -25,6 +26,7 @@ namespace dep {
         double FloatVal;
     public:
         FloatExprAST(double Val) : FloatVal(Val) {}
+        llvm::Value* codegen();
     };
 
     //! Expression class for floating point literals like "1.0".
@@ -32,12 +34,14 @@ namespace dep {
         long IntVal;
     public:
         IntExprAST(long Val) : IntVal(Val) {}
+        llvm::Value* codegen();
     };
 
     class BoolExprAST : public ImmediateAST {
         bool _BoolVal;
     public:
         BoolExprAST(bool val) : _BoolVal(val) {}
+        llvm::Value* codegen();
     };
 
     //! Expression class for referencing a variable, like "a".
@@ -45,12 +49,14 @@ namespace dep {
         std::string Name;
     public:
         VariableExprAST(const std::string &Name) : Name(Name) {}
+        llvm::Value* codegen();
     };
 
     class TupleExprAST : public ExprAST {
         std::vector<std::unique_ptr<ExprAST>> args;
     public:
         TupleExprAST(std::vector<std::unique_ptr<ExprAST>> Args) : args(std::move(Args)) {}
+        llvm::Value* codegen();
     };
 
     //! Expression class for a binary operator.
@@ -61,6 +67,7 @@ namespace dep {
         BinaryExprAST(char op, std::unique_ptr<ExprAST> LHS,
             std::unique_ptr<ExprAST> RHS)
             : Op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+        llvm::Value* codegen();
     };
 
     //! Expression class for function calls.
@@ -71,6 +78,7 @@ namespace dep {
         CallExprAST(const std::string &Callee,
             std::unique_ptr<TupleExprAST> Args)
             : Callee(Callee), Args(std::move(Args)) {}
+        llvm::Value* codegen();
     };
 
     class IfExprAST : public ExprAST {
@@ -79,6 +87,7 @@ namespace dep {
         IfExprAST(std::unique_ptr<ExprAST> Cond, std::unique_ptr<ExprAST> Then,
             std::unique_ptr<ExprAST> Else)
             : Cond(std::move(Cond)), Then(std::move(Then)), Else(std::move(Else)) {}
+        llvm::Value* codegen();
     };
 }
 
