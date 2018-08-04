@@ -1,6 +1,6 @@
 # Predep Language
 
-![](Dep.png)
+<p align="center"><img src="Dep.png" height=250></p>
 
 This is an experimental language to show a proof-of-concept that a dependently typed language can be imperitive while also incurring no runtime-overhead
 
