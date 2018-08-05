@@ -6,13 +6,21 @@
 #include <string>
 #include <memory>
 
-#include "StatementAST.h"
 #include "SymbolTable.h"
 
 namespace dep {
+
+    class DefineAST;
+    class InitAST;
+    class BlockAST;
+    class AssignAST;
+
     class SymbolTableBuilder {
     public:
-        SymbolTable build(StatementAST one_line);
+        void visit(DefineAST& ast) {}
+        void visit(InitAST& ast) {}
+        void visit(BlockAST& ast) {}
+        void visit(AssignAST& ast) {}
     };
 }
 

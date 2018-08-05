@@ -9,7 +9,4 @@
 #include "SymbolTableBuilder.h"
 
 namespace dep {
-    SymbolTable SymbolTableBuilder::build(StatementAST one_line) {
-        return SymbolTable();
-    }
 }
