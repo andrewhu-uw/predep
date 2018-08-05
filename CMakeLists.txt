@@ -3,6 +3,7 @@ set(INTERP_VERSION_MAJOR 0)
 set(INTERP_VERSION_MINOR 1)
 
 set (INTERP_VERSION "${INTERP_VERSION_MAJOR}.${INTERP_VERSION_MINOR}")
+set (DEP_VS_DEFAULT_PROJECT "interp" CACHE STRING "The default project to be run by Visual Studio")
 
 project (Predep)
 
@@ -16,13 +17,17 @@ install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/InterpConfig.h
 
 # Create the Parse library
 add_library(Parser Parser.cpp Lexer.cpp ParserTerminal.cpp ExprAST.cpp 
-        StatementAST.cpp FunctionAST.h ParserStatement.cpp)
+        StatementAST.cpp StatementAST.h FunctionAST.h ParserStatement.cpp)
 
-add_library(Semantics SymbolTable.h)
+# Add source files to Semantics library
+add_library(Semantics SymbolTable.h SymbolTableBuilder.h SymbolTableBuilder.cpp)
+# Make Parser library visible to Semantics
 target_link_libraries (Semantics Parser)
 
+# Making the interpeter
 set (target interp)
-set_property (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT interp)
+# interp as default project
+set_property (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${DEP_VS_DEFAULT_PROJECT})
 
 add_executable(${target} interp.cpp)
 
