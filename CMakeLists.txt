@@ -34,7 +34,13 @@ install (TARGETS ${target} DESTINATION bin)
 set(LLVM_INSTALL_PREFIX CACHE PATH "If LLVM was built using CMake, this is the location where it was installed")
 
 # Update LLVM_DIR for find_package. FORCE makes the GUI update
+if(EXISTS "${LLVM_INSTALL_PREFIX}/lib/cmake/llvm")
 set(LLVM_DIR "${LLVM_INSTALL_PREFIX}/lib/cmake/llvm" CACHE PATH "LLVM CMake files" FORCE)
+endif()
+
+if(EXISTS "${LLVM_INSTALL_PREFIX}/share/llvm/cmake")
+set(LLVM_DIR "${LLVM_INSTALL_PREFIX}/share/llvm/cmake" CACHE PATH "LLVM CMake files" FORCE)
+endif()
 
 find_package(LLVM REQUIRED CONFIG)
 
