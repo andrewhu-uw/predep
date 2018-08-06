@@ -12,10 +12,14 @@ namespace dep {
     class SymbolTable {
         std::map<std::string, std::shared_ptr<SymbolTable>> innerScopes;
         std::shared_ptr<SymbolTable> parentTable;
-        std::map<std::string, Type> table;
+        std::map<std::string, Type> idTable;
         std::string scopeName;
     public:
         SymbolTable() {}
+        /*void enter(std::string id, Type type) {
+            assert(idTable.find(id) == idTable.end() && "This identifier has already been entered into the idTable");
+            idTable.insert(std::pair<std::string, Type>(id, type));
+        }*/
     };
 }
 

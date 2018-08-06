@@ -20,8 +20,8 @@ add_library(Parser Parser.cpp Lexer.cpp ParserTerminal.cpp ExprAST.cpp
         StatementAST.cpp StatementAST.h FunctionAST.h ParserStatement.cpp)
 
 # Add source files to Semantics library
-add_library(Semantics SymbolTable.h SymbolTableBuilder.h SymbolTableBuilder.cpp 
-        )
+add_library(Semantics SymbolTable.h SymbolTableVisitor.h SymbolTableBuilder.cpp 
+        Visitor.h)
 # Make Parser library visible to Semantics
 target_link_libraries (Semantics Parser)
 

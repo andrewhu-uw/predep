@@ -6,20 +6,26 @@
 #include<string>
 
 #include "ExprAST.h"
-#include "SymbolTableBuilder.h"
 
 namespace dep {
+    // Forward definition necessary here
+    class Visitor;
+    
     class StatementAST {
     public:
         virtual ~StatementAST() {}
-        virtual void accept(SymbolTableBuilder b) {}
+        virtual void accept(Visitor& b) {}
     };
 
     class BlockAST {
         std::vector<std::unique_ptr<StatementAST>> statements;
     public:
         BlockAST(std::vector<std::unique_ptr<StatementAST>> s) : statements(std::move(s)) {}
-        virtual void accept(SymbolTableBuilder builder) { builder.visit(*this); }
+        /*!
+            Important: function only declared here, not defined because definition requires definition
+            of Visitor class which would create a circular dependency. Thanks C++...
+        */
+        //virtual void accept(Visitor& builder);
     };
 
     class AssignAST : public StatementAST {
@@ -28,14 +34,12 @@ namespace dep {
     public:
         AssignAST(std::unique_ptr<VariableExprAST> d,
             std::unique_ptr<ExprAST> s) : dest(std::move(d)), src(std::move(s)) {}
-        virtual void accept(SymbolTableBuilder builder) { builder.visit(*this); }
     };
 
     class DefineAST : public StatementAST {
         std::string type, name;
     public:
         DefineAST(std::string Type, std::string Name) : type(Type), name(Name) {}
-        virtual void accept(SymbolTableBuilder builder) { builder.visit(*this); }
     };
 
     class InitAST : public StatementAST {
@@ -44,7 +48,6 @@ namespace dep {
     public:
         InitAST(std::unique_ptr<DefineAST> Def, std::unique_ptr<ExprAST> Rval) :
             def(std::move(Def)), rval(std::move(Rval)) {}
-        virtual void accept(SymbolTableBuilder builder) { builder.visit(*this); }
     };
 
     class CallStatementAST : public StatementAST {

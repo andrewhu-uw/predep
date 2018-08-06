@@ -6,7 +6,6 @@
 
 #include "StatementAST.h"
 #include "SymbolTable.h"
-#include "SymbolTableBuilder.h"
 
 namespace dep {
 }
