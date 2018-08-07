@@ -5,18 +5,27 @@
 #include<map>
 #include<string>
 
-#include"ExprAST.h"
+#include "ExprAST.h"
 
 namespace dep {
+    // Forward definition necessary here
+    class Visitor;
+    
     class StatementAST {
     public:
         virtual ~StatementAST() {}
+        virtual void accept(Visitor& b) {}
     };
 
     class BlockAST {
         std::vector<std::unique_ptr<StatementAST>> statements;
     public:
         BlockAST(std::vector<std::unique_ptr<StatementAST>> s) : statements(std::move(s)) {}
+        /*!
+            Important: function only declared here, not defined because definition requires definition
+            of Visitor class which would create a circular dependency. Thanks C++...
+        */
+        //virtual void accept(Visitor& builder);
     };
 
     class AssignAST : public StatementAST {
