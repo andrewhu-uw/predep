@@ -22,14 +22,14 @@ prop Sorted(Vec<int> self) {
 }
 
 prop fn AdjPair(Vec self) -> prop iter<(int, int)> {
-#                            ^^^^ not necessary, but nice if you want to be explicit
+//                           ^^^^ not necessary, but nice if you want to be explicit
   forall i in 0..self.len-2: (self.arr[i], self.arr[i+1])
 }
 
 fn push(Vec self : Sorted, Vec o : Sorted + Gt(self)) -> Vec self : Sorted + Cons(self, o);
 
 prop Cons(Vec self, Vec a, Vec b) {
-  # not full definition!
+  // not full definition!
   forall e in self: e in Union(a,b)
 }
 
@@ -40,7 +40,7 @@ prop Reorder(Vec self, Vec src) {
 prop fn propIter(Vec self) -> prop iter<int> {
   forall i in self.len-1: self.arr[i]
 }
-#------
+//------
 prop fn First(Vec self : !Empty) -> prop int {
   self.arr[0]
 }
