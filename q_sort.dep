@@ -1,0 +1,66 @@
+fn q_sort(Vec src) -> Vec : Sorted + Reorder(src) {
+  if (src.len < 2) # AdjPair.Empty && Sorted
+    return src;  # src : Reorder(src)
+  int pivot = src.getRand();
+  Vec left = Vec.new();
+  Vec right = Vec.new();
+  for (int curr in src) {  # left : Lt(pivot) && right : Geq(pivot)
+                           # left : Subset(src) && right : Subset(src)
+    if (curr < pivot) 
+      left.push(curr);
+    else 
+      right.push(curr);
+  }                        # Union(left, right) == src && src.Subset(Union(left, right))
+  left = q_sort(left);     # _ : Sorted + Lt(pivot) + Subset(src) && ^ 
+  right = q_sort(right);   # _ : Sorted + Geq(pivot) + Subset(src) && ^
+  return left.push(right); # _ : Sorted + Cons(left, right) + Subset(src) + Union(left, right) && src.Subset(_)
+                           # _ : Reorder(src)
+}
+
+prop Sorted(Vec<int> self) {
+  forall (e,f) in self.AdjPair(): e < f
+}
+
+prop fn AdjPair(Vec self) -> prop iter<(int, int)> {
+#                            ^^^^ not necessary, but nice if you want to be explicit
+  forall i in 0..self.len-2: (self.arr[i], self.arr[i+1])
+}
+
+fn push(Vec self : Sorted, Vec o : Sorted + Gt(self)) -> Vec self : Sorted + Cons(self, o);
+
+prop Cons(Vec self, Vec a, Vec b) {
+  # not full definition!
+  forall e in self: e in Union(a,b)
+}
+
+prop Reorder(Vec self, Vec src) {
+  self.Subset(src) && src.Subset(self)
+}
+
+prop fn propIter(Vec self) -> prop iter<int> {
+  forall i in self.len-1: self.arr[i]
+}
+#------
+prop fn First(Vec self : !Empty) -> prop int {
+  self.arr[0]
+}
+
+prop Lt (Vec self, Vec o) {
+  o.Empty || forall e in self: e < o.First()
+}
+
+prop Lt (Vec self, int ceil) {
+  forall e in self: e < ceil
+}
+
+prop Geq (Vec self, Vec o) {
+  o.Empty || forall e in self: e >= o.First()
+}
+
+prop Geq (Vec self, int ceil) {
+  forall e in self: e >= ceil
+}
+
+prop Subset(Vec self, Vec bigger) {
+  forall e in self: e in bigger
+}
